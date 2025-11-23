@@ -1,1 +1,1 @@
-//Componente da homepage que Direciona para um evento especifico
+//Componente da /eventos com mais detalhe sobre um evento especifico
