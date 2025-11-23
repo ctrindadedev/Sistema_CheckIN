@@ -28,14 +28,5 @@ export const EventoService = {
       setTimeout(() => resolve(EVENTOS_MOCK), 500)
     );
   },
-
-  realizarCheckin: async (
-    eventoId: number,
-    usuarioId: number
-  ): Promise<boolean> => {
-    console.log(
-      `Check-in realizado: Usuário ${usuarioId} no Evento ${eventoId}`
-    );
-    return true;
-  },
 };
+
