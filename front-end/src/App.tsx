@@ -1,17 +1,22 @@
-import { useState } from "react";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import Auth from "./pages/Auth";
+import Evento from "./pages/Evento";
+import EventoUser from "./pages/EventoUser";
 
-function App() {
-  const [count, setCount] = useState(0);
-
+const App: React.FC = () => {
   return (
     <>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="auth" element={<Auth />} />
+        <Route path="/evento/:id" element={<Evento />} />
+      </Routes>
     </>
   );
-}
+};
 
 export default App;
