@@ -6,7 +6,7 @@ const auth = () => {
   return (
     <div>
       Login aqui. Sucesso? redireciona para page evento-user, falha? informa o
-      erro{" "}
+      erro
     </div>
   );
 };
