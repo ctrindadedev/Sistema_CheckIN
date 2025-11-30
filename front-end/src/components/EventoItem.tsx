@@ -87,7 +87,7 @@ const EventoItem: React.FC<EventoItemProps> = ({ evento }) => {
         <MetaGrid>
           <MetaBlock>
             <Label>Data</Label>
-            <Value>{formatDate(evento.data)}</Value>
+            <Value>{evento.data}</Value>
           </MetaBlock>
           <MetaBlock>
             <Label>Local</Label>

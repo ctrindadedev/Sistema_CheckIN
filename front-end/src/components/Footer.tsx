@@ -29,7 +29,7 @@ const Footer = () => {
     <FooterBar>
       <FooterContent>
         <span>© {new Date().getFullYear()} CheckIN System</span>
-        <span>Organize, compartilhe e confirme presenças com facilidade.</span>
+        <span>Todos os seus eventos, num lugar só!</span>
       </FooterContent>
     </FooterBar>
   );

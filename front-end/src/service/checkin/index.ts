@@ -1,23 +1,65 @@
-//Crud do checkin (apenas uma pequena simulação enquanto não tem a API )
-//mudar para singleton
+import type { Inscricao } from "../../types";
 
-import type { Usuario } from "../../types";
-import type { Evento } from "../../types";
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const InscricaoService = {
-  realizarCheckin: async (
+class InscricaoService {
+  private static instance: InscricaoService;
+  private inscricoes: Inscricao[] = [];
+  private sequence = 1;
+
+  private constructor() {}
+
+  static getInstance(): InscricaoService {
+    if (!InscricaoService.instance) {
+      InscricaoService.instance = new InscricaoService();
+    }
+    return InscricaoService.instance;
+  }
+
+  async realizarCheckin(
     eventoId: number,
     usuarioId: number
-  ): Promise<boolean> => {
-    console.log(
-      `Check-in realizado: Usuário ${usuarioId} no Evento ${eventoId}`
+  ): Promise<Inscricao> {
+    await delay(500);
+
+    const jaInscrito = this.inscricoes.some(
+      (inscricao) =>
+        inscricao.eventoId === eventoId && inscricao.usuarioId === usuarioId
     );
-    return true;
-  },
 
-  cancelarInscricao(): async;
+    if (jaInscrito) {
+      throw new Error("Você já confirmou presença neste evento.");
+    }
 
-  getMinhasInscricoes(): async;
+    const novaInscricao: Inscricao = {
+      id: this.sequence++,
+      eventoId,
+      usuarioId,
+      dataCheckin: new Date().toISOString(),
+    };
 
-  verficarStatusInscricao(): async;
-};
+    this.inscricoes.push(novaInscricao);
+    return novaInscricao;
+  }
+
+  async cancelarInscricao(inscricaoId: number): Promise<void> {
+    await delay(300);
+    this.inscricoes = this.inscricoes.filter(
+      (inscricao) => inscricao.id !== inscricaoId
+    );
+  }
+
+  async listarPorUsuario(usuarioId: number): Promise<Inscricao[]> {
+    await delay(300);
+    return this.inscricoes.filter(
+      (inscricao) => inscricao.usuarioId === usuarioId
+    );
+  }
+
+  async listarTodas(): Promise<Inscricao[]> {
+    await delay(300);
+    return [...this.inscricoes];
+  }
+}
+
+export const inscricaoService = InscricaoService.getInstance();

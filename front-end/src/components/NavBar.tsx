@@ -34,7 +34,7 @@ const NavBar = () => {
           <StyledLink to="/">Eventos</StyledLink>
         </li>
         <li>
-          <StyledLink to="/meus-eventos">Meus ingressos</StyledLink>
+          <StyledLink to="/meus-eventos">Meus Eventos</StyledLink>
         </li>
       </NavList>
     </Nav>
