@@ -21,3 +21,13 @@ export interface Inscricao {
   usuarioId: number;
   dataCheckin: string;
 }
+
+export interface LoginPayload {
+  email: string;
+  senha: string;
+}
+
+export interface CheckinPayload {
+  eventoId: number;
+  usuarioId: number;
+}
