@@ -61,7 +61,7 @@ const HomeEventoCard: React.FC<HomeEventoCardProps> = ({ evento }) => {
     <Card>
       <Title>{evento.titulo}</Title>
       <Meta>
-        <span>{formatDate(evento.data)}</span>
+        <span>{evento.data}</span>
         <span>{evento.local}</span>
         <span>{evento.vagas} vagas</span>
       </Meta>
