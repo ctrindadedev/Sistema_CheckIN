@@ -6,14 +6,27 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 @Entity
+@Table(name = "inscricoes")
 public class Inscricao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "evento_id", nullable = false)
     private Long eventoId;
+
+    @Column(name = "usuario_id", nullable = false)
     private Long usuarioId;
+
     private LocalDateTime dataCheckin;
 
     public Inscricao() {
