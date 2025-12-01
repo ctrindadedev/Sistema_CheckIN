@@ -1,22 +1,45 @@
 package grupoHeitorECaio.checkInProject.controller;
 
+import grupoHeitorECaio.checkInProject.dto.CheckinRequest;
+import grupoHeitorECaio.checkInProject.model.Inscricao;
+import grupoHeitorECaio.checkInProject.service.inscricao.InscricaoService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("/checkin") // Bate com a pasta "checkin" do service
+@RequestMapping("/checkin")
 @CrossOrigin(origins = "*")
 public class CheckinController {
 
+    private final InscricaoService inscricaoService;
+
+    public CheckinController(InscricaoService inscricaoService) {
+        this.inscricaoService = inscricaoService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Inscricao>> listarTodos() {
+        return ResponseEntity.ok(inscricaoService.listarTodas());
+    }
+
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<Inscricao>> listarPorUsuario(@PathVariable Long usuarioId) {
+        return ResponseEntity.ok(inscricaoService.listarPorUsuario(usuarioId));
+    }
+
     @PostMapping
-    public Map<String, String> realizarCheckin(@RequestBody Map<String, Long> dadosCheckin) {
-        Long usuarioId = dadosCheckin.get("usuarioId");
-        Long eventoId = dadosCheckin.get("eventoId");
+    public ResponseEntity<Inscricao> realizarCheckin(@Valid @RequestBody CheckinRequest request) {
+        Inscricao inscricao = inscricaoService.realizarCheckin(request.eventoId(), request.usuarioId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(inscricao);
+    }
 
-        // Lógica: Buscar evento no repository e adicionar o usuarioId na lista de
-        // inscritos
-        System.out.println("Check-in realizado! Usuário: " + usuarioId + " no Evento: " + eventoId);
-
-        return Map.of("message", "Check-in realizado com sucesso!");
+    @DeleteMapping("/{inscricaoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cancelar(@PathVariable Long inscricaoId) {
+        inscricaoService.cancelarInscricao(inscricaoId);
     }
 }

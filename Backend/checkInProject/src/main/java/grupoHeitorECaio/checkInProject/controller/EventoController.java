@@ -1,32 +1,47 @@
 package grupoHeitorECaio.checkInProject.controller;
 
 import grupoHeitorECaio.checkInProject.model.Evento;
-import grupoHeitorECaio.checkInProject.repository.EventoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import grupoHeitorECaio.checkInProject.service.evento.EventoService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/eventos") // Bate com a pasta "evento" do service
+@RequestMapping("/eventos")
 @CrossOrigin(origins = "*")
 public class EventoController {
 
-    @Autowired
-    private EventoRepository repository;
+    private final EventoService eventoService;
 
-    @GetMapping
-    public List<Evento> listarEventos() {
-        return repository.findAll();
+    public EventoController(EventoService eventoService) {
+        this.eventoService = eventoService;
     }
 
-    @PostMapping
-    public Evento criarEvento(@RequestBody Evento evento) {
-        return repository.save(evento);
+    @GetMapping
+    public ResponseEntity<List<Evento>> listarEventos() {
+        return ResponseEntity.ok(eventoService.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public Evento buscarPorId(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
+    public ResponseEntity<Evento> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(eventoService.buscarPorId(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<Evento> criarEvento(@RequestBody Evento evento) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.criar(evento));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Evento> atualizarEvento(@PathVariable Long id, @RequestBody Evento evento) {
+        return ResponseEntity.ok(eventoService.atualizar(id, evento));
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerEvento(@PathVariable Long id) {
+        eventoService.remover(id);
     }
 }
