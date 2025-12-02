@@ -1,7 +1,7 @@
-package grupoHeitorECaio.checkInProject.service.evento;
+package com.checkInProject.service.evento;
 
-import grupoHeitorECaio.checkInProject.model.Evento;
-import grupoHeitorECaio.checkInProject.repository.evento.EventoRepository;
+import com.checkInProject.model.Evento;
+import com.checkInProject.repository.evento.EventoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,4 +51,3 @@ public class EventoService {
         eventoRepository.delete(existente);
     }
 }
-

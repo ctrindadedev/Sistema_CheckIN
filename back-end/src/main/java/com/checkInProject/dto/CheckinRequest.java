@@ -1,4 +1,4 @@
-package grupoHeitorECaio.checkInProject.dto;
+package com.checkInProject.dto;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -10,4 +10,3 @@ public record CheckinRequest(
         Long usuarioId
 ) {
 }
-

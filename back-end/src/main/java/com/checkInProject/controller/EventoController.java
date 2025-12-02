@@ -1,7 +1,7 @@
-package grupoHeitorECaio.checkInProject.controller;
+package com.checkInProject.controller;
 
-import grupoHeitorECaio.checkInProject.model.Evento;
-import grupoHeitorECaio.checkInProject.service.evento.EventoService;
+import com.checkInProject.model.Evento;
+import com.checkInProject.service.evento.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

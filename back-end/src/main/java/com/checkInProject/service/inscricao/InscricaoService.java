@@ -1,9 +1,9 @@
-package grupoHeitorECaio.checkInProject.service.inscricao;
+package com.checkInProject.service.inscricao;
 
-import grupoHeitorECaio.checkInProject.model.Evento;
-import grupoHeitorECaio.checkInProject.model.Inscricao;
-import grupoHeitorECaio.checkInProject.repository.inscricao.InscricaoRepository;
-import grupoHeitorECaio.checkInProject.service.evento.EventoService;
+import com.checkInProject.model.Evento;
+import com.checkInProject.model.Inscricao;
+import com.checkInProject.repository.inscricao.InscricaoRepository;
+import com.checkInProject.service.evento.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,4 +66,3 @@ public class InscricaoService {
         return inscricaoRepository.existsByEventoIdAndUsuarioId(eventoId, usuarioId);
     }
 }
-

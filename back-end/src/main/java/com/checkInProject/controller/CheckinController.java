@@ -1,8 +1,8 @@
-package grupoHeitorECaio.checkInProject.controller;
+package com.checkInProject.controller;
 
-import grupoHeitorECaio.checkInProject.dto.CheckinRequest;
-import grupoHeitorECaio.checkInProject.model.Inscricao;
-import grupoHeitorECaio.checkInProject.service.inscricao.InscricaoService;
+import com.checkInProject.dto.CheckinRequest;
+import com.checkInProject.model.Inscricao;
+import com.checkInProject.service.inscricao.InscricaoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

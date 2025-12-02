@@ -1,4 +1,4 @@
-package grupoHeitorECaio.checkInProject.model;
+package com.checkInProject.model;
 
 public enum TipoUsuario {
     ADMIN,

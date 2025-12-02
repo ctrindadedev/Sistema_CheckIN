@@ -1,10 +1,9 @@
-package grupoHeitorECaio.checkInProject.repository.evento;
+package com.checkInProject.repository.evento;
 
-import grupoHeitorECaio.checkInProject.model.Evento;
+import com.checkInProject.model.Evento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EventoRepository extends JpaRepository<Evento, Long> {
 }
-

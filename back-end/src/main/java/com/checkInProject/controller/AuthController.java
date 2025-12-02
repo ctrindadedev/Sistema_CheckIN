@@ -1,21 +1,19 @@
-package grupoHeitorECaio.checkInProject.controller;
+package com.checkInProject.controller;
 
-import grupoHeitorECaio.checkInProject.model.Usuario; // Certifique-se de ter a classe Usuario criada
+import com.checkInProject.model.Usuario;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/auth") // Bate com a pasta "auth" do service
-@CrossOrigin(origins = "*") // Permite que o React acesse sem bloqueio
+@RequestMapping("/auth")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
-        // aqui seria a validação de usuário no futuro.
-        // Por enquanto, devolver um usuário teste para o front funcionar.
-
+        // Simulação de login
         Map<String, Object> response = new HashMap<>();
         response.put("id", 1);
         response.put("nome", "Usuário Teste");
@@ -27,7 +25,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public Map<String, String> register(@RequestBody Usuario usuario) {
-        // aqui salvaria no HashMap de usuários
         return Map.of("message", "Usuário criado com sucesso!");
     }
 }

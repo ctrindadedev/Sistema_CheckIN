@@ -1,6 +1,6 @@
-package grupoHeitorECaio.checkInProject.repository.inscricao;
+package com.checkInProject.repository.inscricao;
 
-import grupoHeitorECaio.checkInProject.model.Inscricao;
+import com.checkInProject.model.Inscricao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +18,3 @@ public interface InscricaoRepository extends JpaRepository<Inscricao, Long> {
 
     List<Inscricao> findByUsuarioId(Long usuarioId);
 }
-
