@@ -1,55 +1,46 @@
 package com.checkInProject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
+
 
 @Entity
-@Table(name = "usuarios")
-public class Usuario {
-
+@Table(name="usuario_tb")
+@Getter @Setter
+@AllArgsConstructor @NoArgsConstructor
+@Builder
+@ToString
+public class Usuario extends  EntidadeGenerica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="usuario_id")
     private Long id;
-    @Column(nullable = false)
+
     private String nome;
-    @Column(nullable = false, unique = true)
+
+    @Column(unique = true)
     private String email;
-    @Column(nullable = false)
+
     private String senha;
+
+    @Column(unique = true)
+    private String telefone;
+
+    private Boolean ativo;
+
+    @Column(name = "criado_em")
+    private LocalDateTime createdAt;
+
+    @Column(name = "atualizado_em")
+    private LocalDateTime updatedAt;
+
     @Enumerated(EnumType.STRING)
-    private TipoUsuario tipo;
+    private ETipoUsuario role;
 
-    @Transient
-    private String token;
-
-    public Usuario() {
+    @PrePersist
+    private void prePersistUsuario() {
+        this.ativo = Boolean.TRUE;
+        this.role = ETipoUsuario.PARTICIPANTE;
     }
-
-    public Usuario(String nome, String email, String senha, TipoUsuario tipo) {
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.tipo = tipo;
-    }
-
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getSenha() { return senha; }
-    public void setSenha(String senha) { this.senha = senha; }
-    public TipoUsuario getTipo() { return tipo; }
-    public void setTipo(TipoUsuario tipo) { this.tipo = tipo; }
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
 }

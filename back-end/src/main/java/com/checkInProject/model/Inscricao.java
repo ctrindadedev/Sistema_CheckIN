@@ -1,45 +1,50 @@
 package com.checkInProject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "inscricoes")
-public class Inscricao {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "evento_inscricoes")
+public class Inscricao extends  EntidadeGenerica {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "evento_id", nullable = false)
-    private Long eventoId;
+    @ManyToOne
+    @JoinColumn(name = "evento_id", nullable = false)
+    private Evento evento;
 
-    @Column(name = "usuario_id", nullable = false)
-    private Long usuarioId;
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
+    @Column(name = "data_checkin")
     private LocalDateTime dataCheckin;
 
-    public Inscricao() {
-    }
+    @Enumerated(EnumType.STRING)
+    private EStatusCheckInEvento statusCheckin;
 
-    public Inscricao(Long eventoId, Long usuarioId, LocalDateTime dataCheckin) {
-        this.eventoId = eventoId;
-        this.usuarioId = usuarioId;
-        this.dataCheckin = dataCheckin;
-    }
+    @Column(name = "criado_em")
+    private LocalDateTime createdAt;
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public Long getEventoId() { return eventoId; }
-    public void setEventoId(Long eventoId) { this.eventoId = eventoId; }
-    public Long getUsuarioId() { return usuarioId; }
-    public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }
-    public LocalDateTime getDataCheckin() { return dataCheckin; }
-    public void setDataCheckin(LocalDateTime dataCheckin) { this.dataCheckin = dataCheckin; }
+    @Column(name = "atualizado_em")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    private void prePersistInscricao() {
+        if (this.statusCheckin == null) {
+            this.statusCheckin = EStatusCheckInEvento.AGUARDANDO_VALIDACAO;
+
+        }
+    }
 }

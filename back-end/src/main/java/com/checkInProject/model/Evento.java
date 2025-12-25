@@ -1,54 +1,51 @@
 package com.checkInProject.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "eventos")
-public class Evento {
+@Table(name = "eventos_tb")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
+
+public class Evento extends  EntidadeGenerica {
 
     @Id
+    @Column(name = "evento_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String titulo;
-    @Column(columnDefinition = "TEXT")
+
+    @Column(length = 5000)
     private String descricao;
+
+    @Column(name = "data_evento")
     private LocalDateTime data;
+
+    @Column(name = "local_evento")
     private String local;
+
     private Integer vagas;
+
+    @Column(length = 1000)
     private String imagemUrl;
 
-    public Evento() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "usuario_organizador_id")
+    private Usuario usuarioOrganizador;
 
-    public Evento(String titulo, String descricao, LocalDateTime data, String local, Integer vagas, String imagemUrl) {
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.data = data;
-        this.local = local;
-        this.vagas = vagas;
-        this.imagemUrl = imagemUrl;
-    }
+    @Column(name = "criado_em")
+    private LocalDateTime createdAt;
 
-    // Getters e Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
-    public LocalDateTime getData() { return data; }
-    public void setData(LocalDateTime data) { this.data = data; }
-    public String getLocal() { return local; }
-    public void setLocal(String local) { this.local = local; }
-    public Integer getVagas() { return vagas; }
-    public void setVagas(Integer vagas) { this.vagas = vagas; }
-    public String getImagemUrl() { return imagemUrl; }
-    public void setImagemUrl(String imagemUrl) { this.imagemUrl = imagemUrl; }
+    @Column(name = "atualizado_em")
+    private LocalDateTime updatedAt;
+
 }

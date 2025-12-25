@@ -1,7 +1,6 @@
 package com.checkInProject.model;
 
-public enum TipoUsuario {
-    ADMIN,
+public enum ETipoUsuario {
     PARTICIPANTE,
     ORGANIZADOR
 }
