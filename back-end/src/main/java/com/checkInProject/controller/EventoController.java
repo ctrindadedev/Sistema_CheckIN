@@ -1,6 +1,7 @@
 package com.checkInProject.controller;
 
 import com.checkInProject.model.Evento;
+import com.checkInProject.model.Usuario;
 import com.checkInProject.service.evento.EventoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,13 +31,13 @@ public class EventoController {
     }
 
     @PostMapping
-    public ResponseEntity<Evento> criarEvento(@RequestBody Evento evento) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.criar(evento));
+    public ResponseEntity<Evento> criarEvento(@RequestBody Evento evento, Usuario usuario) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.criar(evento, usuario));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Evento> atualizarEvento(@PathVariable Long id, @RequestBody Evento evento) {
-        return ResponseEntity.ok(eventoService.atualizar(id, evento));
+    public ResponseEntity<Evento> atualizarEvento(@PathVariable Long id, @RequestBody Evento evento,  Usuario usuario) {
+        return ResponseEntity.ok(eventoService.atualizar(id, evento, usuario));
     }
 
     @DeleteMapping("/{id}")

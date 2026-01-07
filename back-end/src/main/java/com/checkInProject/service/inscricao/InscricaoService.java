@@ -1,58 +1,68 @@
 package com.checkInProject.service.inscricao;
 
+import com.checkInProject.dto.InscricaoDTO;
 import com.checkInProject.model.Evento;
 import com.checkInProject.model.Inscricao;
+import com.checkInProject.model.Usuario;
 import com.checkInProject.repository.inscricao.InscricaoRepository;
 import com.checkInProject.service.evento.EventoService;
+import com.checkInProject.service.usuario.UsuarioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InscricaoService {
 
     private final InscricaoRepository inscricaoRepository;
     private final EventoService eventoService;
+    private  final UsuarioService usuarioService;
 
-    public InscricaoService(InscricaoRepository inscricaoRepository,
-                            EventoService eventoService) {
+
+    public InscricaoService(InscricaoRepository inscricaoRepository, EventoService eventoService, UsuarioService usuarioService) {
         this.inscricaoRepository = inscricaoRepository;
         this.eventoService = eventoService;
-    }
-
-    public List<Inscricao> listarPorUsuario(Long usuarioId) {
-        return inscricaoRepository.findByUsuarioId(usuarioId);
+        this.usuarioService = usuarioService;
     }
 
     public List<Inscricao> listarTodas() {
         return inscricaoRepository.findAll();
     }
 
-    @Transactional
-    public Inscricao realizarCheckin(Long eventoId, Long usuarioId) {
-        Evento evento = eventoService.buscarPorId(eventoId);
+    public List<Inscricao> listarPorUsuarioId(Long id) {
+        Usuario usuario = usuarioService.buscarPorId(id);
+        if (usuario.getId() == null || !usuario.getId().equals(id)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuário informado não existe");
+        }
+        return inscricaoRepository.findByUsuario(usuario);
+    }
 
-        if (inscricaoRepository.existsByEventoIdAndUsuarioId(eventoId, usuarioId)) {
+    @Transactional
+    public Inscricao realizarInscricao(Long eventoId, Long usuarioId) {
+
+        Evento evento = eventoService.buscarPorId(eventoId);
+        Usuario usuario = usuarioService.buscarPorId(usuarioId);
+
+        if (inscricaoRepository.existsByEventoAndUsuario(evento, usuario)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Usuário já inscrito neste evento");
         }
-
         if (evento.getVagas() != null) {
-            long ocupadas = inscricaoRepository.countByEventoId(eventoId);
+            long ocupadas = inscricaoRepository.countByEvento(evento);
             if (ocupadas >= evento.getVagas()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não há vagas disponíveis");
             }
         }
+        InscricaoDTO inscricao = new InscricaoDTO();
+        Inscricao inscricaoToSave = inscricao.toEntity(usuario, evento);
 
-        Inscricao inscricao = new Inscricao();
-        inscricao.setEventoId(eventoId);
-        inscricao.setUsuarioId(usuarioId);
-        inscricao.setDataCheckin(LocalDateTime.now());
+        InscricaoDTO.fromEntity(inscricaoToSave);
+        inscricaoToSave.setEvento(evento);
+        inscricaoToSave.setUsuario(usuario);
 
-        return inscricaoRepository.save(inscricao);
+        return inscricaoRepository.save(inscricaoToSave);
     }
 
     @Transactional
@@ -62,7 +72,8 @@ public class InscricaoService {
         inscricaoRepository.delete(existente);
     }
 
-    public boolean possuiInscricao(Long eventoId, Long usuarioId) {
-        return inscricaoRepository.existsByEventoIdAndUsuarioId(eventoId, usuarioId);
+    //Verifica se um usuário possui a inscrição no evento informado
+    public Optional<Inscricao> possuiInscricao(Long eventoId, Long usuarioId) {
+        return inscricaoRepository.findByEventoIdAndUsuarioId(eventoId, usuarioId);
     }
 }

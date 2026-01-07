@@ -2,44 +2,35 @@ package com.checkInProject.controller;
 
 import com.checkInProject.dto.CheckinRequest;
 import com.checkInProject.model.Inscricao;
-import com.checkInProject.service.inscricao.InscricaoService;
+import com.checkInProject.service.checkin.CheckinService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/checkin")
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class CheckinController {
 
-    private final InscricaoService inscricaoService;
-
-    public CheckinController(InscricaoService inscricaoService) {
-        this.inscricaoService = inscricaoService;
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Inscricao>> listarTodos() {
-        return ResponseEntity.ok(inscricaoService.listarTodas());
-    }
-
-    @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<Inscricao>> listarPorUsuario(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(inscricaoService.listarPorUsuario(usuarioId));
-    }
+    private final CheckinService checkinService;
 
     @PostMapping
     public ResponseEntity<Inscricao> realizarCheckin(@Valid @RequestBody CheckinRequest request) {
-        Inscricao inscricao = inscricaoService.realizarCheckin(request.eventoId(), request.usuarioId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(inscricao);
+        Inscricao inscricaoRealizada = checkinService.realizarCheckIn(
+                request.eventoId(),
+                request.usuarioId()
+        );
+
+        return ResponseEntity.ok(inscricaoRealizada);
     }
 
-    @DeleteMapping("/{inscricaoId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelar(@PathVariable Long inscricaoId) {
-        inscricaoService.cancelarInscricao(inscricaoId);
+    @DeleteMapping
+    public ResponseEntity<Void> cancelarCheckin(@Valid @RequestBody CheckinRequest request) {
+        checkinService.cancelarCheckIn(request.eventoId(), request.usuarioId());
+        return ResponseEntity.noContent().build();
     }
+
 }

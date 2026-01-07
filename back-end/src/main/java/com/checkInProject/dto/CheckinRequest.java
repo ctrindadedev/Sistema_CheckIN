@@ -8,5 +8,4 @@ public record CheckinRequest(
 
         @NotNull(message = "O id do usuário é obrigatório")
         Long usuarioId
-) {
-}
+) { }
