@@ -1,4 +1,4 @@
-package com.checkInProject.dto;
+package com.checkInProject.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 
