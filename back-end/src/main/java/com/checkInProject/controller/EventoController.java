@@ -1,8 +1,10 @@
 package com.checkInProject.controller;
 
+import com.checkInProject.dto.EventoDTO;
 import com.checkInProject.model.Evento;
 import com.checkInProject.model.Usuario;
 import com.checkInProject.service.evento.EventoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +32,10 @@ public class EventoController {
         return ResponseEntity.ok(eventoService.buscarPorId(id));
     }
 
+    @Valid
     @PostMapping
-    public ResponseEntity<Evento> criarEvento(@RequestBody Evento evento, Usuario usuario) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.criar(evento, usuario));
+    public ResponseEntity<Evento> criarEvento(@RequestBody EventoDTO eventoDto, Usuario usuario) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.criar(eventoDto, usuario));
     }
 
     @PutMapping("/{id}")

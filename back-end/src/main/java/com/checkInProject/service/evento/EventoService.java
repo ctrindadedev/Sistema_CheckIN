@@ -31,15 +31,13 @@ public class EventoService {
     }
 
     @Transactional
-    public Evento criar(Evento evento, Usuario usuario) {
+    public Evento criar(EventoDTO evento, Usuario usuario) {
             if (!(usuario.getRole() == ETipoUsuario.ORGANIZADOR)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuário não é um organizador");
             }
-            EventoDTO eventoToSave;
-            eventoToSave = EventoDTO.fromEntity(evento);
-            //lembrar de validar se essa lógica faz sentido (do id)
-            eventoToSave.setId(null);
-            return eventoRepository.save(eventoToSave.toEntity());
+            Evento eventoToSave;
+            eventoToSave = evento.toEntity();
+            return eventoRepository.save(eventoToSave);
         };
 
     @Transactional
