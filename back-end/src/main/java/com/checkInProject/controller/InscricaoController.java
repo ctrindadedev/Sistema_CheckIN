@@ -1,10 +1,8 @@
 package com.checkInProject.controller;
 
 
-import com.checkInProject.dto.CheckinRequest;
 import com.checkInProject.model.Inscricao;
 import com.checkInProject.service.inscricao.InscricaoService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

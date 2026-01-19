@@ -1,11 +1,10 @@
 package com.checkInProject.controller;
 
-import com.checkInProject.dto.CheckinRequest;
+import com.checkInProject.dto.request.CheckinRequest;
 import com.checkInProject.model.Inscricao;
 import com.checkInProject.service.checkin.CheckinService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -32,9 +32,8 @@ public class EventoController {
         return ResponseEntity.ok(eventoService.buscarPorId(id));
     }
 
-    @Valid
     @PostMapping
-    public ResponseEntity<Evento> criarEvento(@RequestBody EventoDTO eventoDto, Usuario usuario) {
+    public ResponseEntity<Evento> criarEvento( @Valid @RequestBody EventoDTO eventoDto, Usuario usuario) {
         return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.criar(eventoDto, usuario));
     }
 
