@@ -1,30 +1,68 @@
 package com.checkInProject.controller;
 
+import com.checkInProject.config.TokenConfig;
+import com.checkInProject.dto.request.LoginRequest;
+import com.checkInProject.dto.request.RegisterUsuarioRequest;
+import com.checkInProject.dto.response.LoginResponse;
 import com.checkInProject.model.Usuario;
+import com.checkInProject.repository.usuario.UsuarioRepository;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*")
+
 public class AuthController {
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final TokenConfig tokenConfig;
+
+    public AuthController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenConfig tokenConfig) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.tokenConfig = tokenConfig;
+    }
+
+
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
-        // Simulação de login
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", 1);
-        response.put("nome", "Usuário Teste");
-        response.put("email", loginData.get("email"));
-        response.put("token", "token-fake-jwt-123456");
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
 
-        return response;
+        UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+        Authentication authentication = authenticationManager.authenticate(userAndPass);
+
+        Usuario user = (Usuario) authentication.getPrincipal();
+        String token = tokenConfig.generateToken(user);
+        return ResponseEntity.ok(new LoginResponse(token));
     }
 
     @PostMapping("/register")
-    public Map<String, String> register(@RequestBody Usuario usuario) {
-        return Map.of("message", "Usuário criado com sucesso!");
+    public ResponseEntity<RegisterUserResponse> register(@Valid @RequestBody RegisterUsuarioRequest request) {
+        Usuario newUser = new Usuario();
+        newUser.setSenha(passwordEncoder.encode(request.password()));
+        newUser.setEmail(request.email());
+        newUser.setNome(request.name());
+
+        if (request.role() != null) {
+            newUser.setRole(Set.of(request.role()));
+        } else {
+            newUser.setRoles(Set.of(Role.ROLE_USER));
+        }
+
+        usuarioRepository.save(newUser);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterUserResponse(newUser.getName(), newUser.getEmail()));
     }
+
 }
