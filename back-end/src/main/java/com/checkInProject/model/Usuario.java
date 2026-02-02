@@ -3,6 +3,8 @@ package com.checkInProject.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -38,9 +40,18 @@ public class Usuario extends  EntidadeGenerica {
     @Enumerated(EnumType.STRING)
     private ETipoUsuario role;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "perfis_usuario", joinColumns = @JoinColumn(name = "usuario_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Set<ETipoUsuario> roles = new HashSet<>();
+
     @PrePersist
     private void prePersistUsuario() {
         this.ativo = Boolean.TRUE;
-        this.role = ETipoUsuario.PARTICIPANTE;
+        if (this.roles == null || this.roles.isEmpty()) {
+            this.roles = new HashSet<>();
+            this.roles.add(ETipoUsuario.PARTICIPANTE);
+        }
     }
 }

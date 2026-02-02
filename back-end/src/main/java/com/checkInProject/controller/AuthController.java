@@ -4,6 +4,8 @@ import com.checkInProject.config.TokenConfig;
 import com.checkInProject.dto.request.LoginRequest;
 import com.checkInProject.dto.request.RegisterUsuarioRequest;
 import com.checkInProject.dto.response.LoginResponse;
+import com.checkInProject.dto.response.RegisterUsuarioResponse;
+import com.checkInProject.model.ETipoUsuario;
 import com.checkInProject.model.Usuario;
 import com.checkInProject.repository.usuario.UsuarioRepository;
 import jakarta.validation.Valid;
@@ -15,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 
 
 @RestController
@@ -48,21 +51,16 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterUserResponse> register(@Valid @RequestBody RegisterUsuarioRequest request) {
+    public ResponseEntity<RegisterUsuarioResponse> register(@Valid @RequestBody RegisterUsuarioRequest request) {
         Usuario newUser = new Usuario();
         newUser.setSenha(passwordEncoder.encode(request.password()));
         newUser.setEmail(request.email());
         newUser.setNome(request.name());
-
-        if (request.role() != null) {
-            newUser.setRole(Set.of(request.role()));
-        } else {
-            newUser.setRoles(Set.of(Role.ROLE_USER));
-        }
+        newUser.setRoles(Set.of(ETipoUsuario.PARTICIPANTE));
 
         usuarioRepository.save(newUser);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterUserResponse(newUser.getName(), newUser.getEmail()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterUsuarioResponse(newUser.getNome(), newUser.getEmail()));
     }
 
 }
