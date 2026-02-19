@@ -1,6 +1,8 @@
 package com.checkInProject.service.inscricao;
 
 import com.checkInProject.dto.InscricaoDTO;
+import com.checkInProject.exception.RecursoNaoEncontradoException;
+import com.checkInProject.exception.RegraDeNegocioException;
 import com.checkInProject.model.Evento;
 import com.checkInProject.model.Inscricao;
 import com.checkInProject.model.Usuario;
@@ -35,7 +37,7 @@ public class InscricaoService {
     public List<Inscricao> listarPorUsuarioId(Long id) {
         Usuario usuario = usuarioService.buscarPorId(id);
         if (usuario.getId() == null || !usuario.getId().equals(id)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Usuário informado não existe");
+            throw new RecursoNaoEncontradoException("Usuário informado não existe");
         }
         return inscricaoRepository.findByUsuario(usuario);
     }
@@ -47,12 +49,12 @@ public class InscricaoService {
         Usuario usuario = usuarioService.buscarPorId(usuarioId);
 
         if (inscricaoRepository.existsByEventoAndUsuario(evento, usuario)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Usuário já inscrito neste evento");
+            throw new RegraDeNegocioException("Usuário já inscrito neste evento");
         }
         if (evento.getVagas() != null) {
             long ocupadas = inscricaoRepository.countByEvento(evento);
             if (ocupadas >= evento.getVagas()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não há vagas disponíveis");
+                throw new RecursoNaoEncontradoException("Não há vagas disponíveis");
             }
         }
         InscricaoDTO inscricao = new InscricaoDTO();
@@ -68,11 +70,10 @@ public class InscricaoService {
     @Transactional
     public void cancelarInscricao(Long inscricaoId) {
         Inscricao existente = inscricaoRepository.findById(inscricaoId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inscrição não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição não encontrada"));
         inscricaoRepository.delete(existente);
     }
 
-    //Verifica se um usuário possui a inscrição no evento informado
     public Optional<Inscricao> possuiInscricao(Long eventoId, Long usuarioId) {
         return inscricaoRepository.findByEventoIdAndUsuarioId(eventoId, usuarioId);
     }

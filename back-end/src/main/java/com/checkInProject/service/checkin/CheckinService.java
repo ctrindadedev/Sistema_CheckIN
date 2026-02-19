@@ -1,5 +1,7 @@
 package com.checkInProject.service.checkin;
 
+import com.checkInProject.exception.RecursoNaoEncontradoException;
+import com.checkInProject.exception.RegraDeNegocioException;
 import com.checkInProject.model.EStatusCheckInEvento;
 import com.checkInProject.model.Evento;
 import com.checkInProject.model.Inscricao;
@@ -25,10 +27,10 @@ public class CheckinService {
     public Inscricao realizarCheckIn(Long eventoId, Long usuarioId) {
 
         Inscricao inscricao = inscricaoService.possuiInscricao(eventoId, usuarioId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inscrição não encontrada para este usuário neste evento."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição não encontrada, é necessário estar inscrito no evento antes de fazer check-in."));
 
         if (inscricao.getDataCheckin() != null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Check-in já foi realizado anteriormente.");
+            throw new RegraDeNegocioException("O check-in para esta inscrição já foi realizado anteriormente.");
         }
         inscricao.setDataCheckin(LocalDateTime.now());
         inscricao.setStatusCheckin(EStatusCheckInEvento.VALIDADO);
@@ -40,7 +42,7 @@ public class CheckinService {
 
     public void cancelarCheckIn(Long eventoId, Long usuarioId) {
         Inscricao inscricao = inscricaoService.possuiInscricao(eventoId, usuarioId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inscrição não encontrada."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição não encontrada, é necessário estar inscrito no evento antes de fazer check-in."));
 
         inscricao.setDataCheckin(null);
         inscricao.setStatusCheckin(EStatusCheckInEvento.AGUARDANDO_VALIDACAO);

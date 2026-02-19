@@ -1,6 +1,8 @@
 package com.checkInProject.service.evento;
 
 import com.checkInProject.dto.EventoDTO;
+import com.checkInProject.exception.RecursoNaoEncontradoException;
+import com.checkInProject.exception.RegraDeNegocioException;
 import com.checkInProject.model.ETipoUsuario;
 import com.checkInProject.model.Evento;
 import com.checkInProject.model.Usuario;
@@ -27,13 +29,13 @@ public class EventoService {
 
     public Evento buscarPorId(Long id) {
         return eventoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evento não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Evento não encontrado com o ID: " + id));
     }
 
     @Transactional
     public Evento criar(EventoDTO evento, Usuario usuario) {
             if (!(usuario.getRoles().contains(ETipoUsuario.ORGANIZADOR))) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuário não é um organizador");
+                throw new RegraDeNegocioException("Usuário precisa ser um organizador.");
             }
             Evento eventoToSave;
             eventoToSave = evento.toEntity();
@@ -43,7 +45,7 @@ public class EventoService {
     @Transactional
     public Evento atualizar(Long id, Evento dadosAtualizados,  Usuario usuario) {
         if (!(usuario.getRoles().contains(ETipoUsuario.ORGANIZADOR))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuário não é um organizador");
+            throw new RegraDeNegocioException("Usuário precisa ser um organizador.");
         }
 
         Evento eventoexistente = buscarPorId(id);
@@ -60,9 +62,9 @@ public class EventoService {
     @Transactional
     public void remover(Long id) {
         Evento existente = buscarPorId(id);
-        if (existente != null) {
-            eventoRepository.delete(existente);
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Evento com o ID informado não existe");
+        if (existente == null) throw new RecursoNaoEncontradoException("Evento não encontrado com o ID: " + id);
+
+        eventoRepository.delete(existente);
+
     }
 }
