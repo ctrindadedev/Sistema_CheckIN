@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter @Setter
 public class UsuarioDTO {
 
@@ -30,7 +32,7 @@ public class UsuarioDTO {
     @NotBlank(message = "O telefone é obrigatório")
     private String telefone;
 
-    private String role; // Output only
+    private Set<ETipoUsuario> roles; // Output only
 
     // DTO -> Entity
     public Usuario toEntity() {
@@ -39,7 +41,7 @@ public class UsuarioDTO {
         usuario.setEmail(this.email);
         usuario.setTelefone(this.telefone);
         usuario.setSenha(this.senha);
-        usuario.setRole(ETipoUsuario.PARTICIPANTE);
+        usuario.setRoles(this.roles);
         usuario.setAtivo(true);
 
         return usuario;
@@ -53,7 +55,7 @@ public class UsuarioDTO {
         dto.setEmail(usuario.getEmail());
         dto.setTelefone(usuario.getTelefone());
         dto.setSenha(null);
-        dto.setRole(usuario.getRole().name());
+        dto.setRoles(usuario.getRoles());
         return dto;
     }
 }

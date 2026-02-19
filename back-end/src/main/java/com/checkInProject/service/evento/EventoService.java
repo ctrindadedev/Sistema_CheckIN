@@ -32,7 +32,7 @@ public class EventoService {
 
     @Transactional
     public Evento criar(EventoDTO evento, Usuario usuario) {
-            if (!(usuario.getRole() == ETipoUsuario.ORGANIZADOR)) {
+            if (!(usuario.getRoles().contains(ETipoUsuario.ORGANIZADOR))) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuário não é um organizador");
             }
             Evento eventoToSave;
@@ -42,10 +42,10 @@ public class EventoService {
 
     @Transactional
     public Evento atualizar(Long id, Evento dadosAtualizados,  Usuario usuario) {
-        if (!(usuario.getRole() == ETipoUsuario.ORGANIZADOR)) {
+        if (!(usuario.getRoles().contains(ETipoUsuario.ORGANIZADOR))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Usuário não é um organizador");
-
         }
+
         Evento eventoexistente = buscarPorId(id);
         EventoDTO eventoToUpdate = EventoDTO.fromEntity(eventoexistente);
         eventoToUpdate.setTitulo(dadosAtualizados.getTitulo());

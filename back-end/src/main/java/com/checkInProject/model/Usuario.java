@@ -2,9 +2,15 @@ package com.checkInProject.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -13,7 +19,7 @@ import java.util.Set;
 @AllArgsConstructor @NoArgsConstructor
 @Builder
 @ToString
-public class Usuario extends  EntidadeGenerica {
+public class Usuario extends  EntidadeGenerica implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="usuario_id")
@@ -37,9 +43,6 @@ public class Usuario extends  EntidadeGenerica {
     @Column(name = "atualizado_em")
     private LocalDateTime updatedAt;
 
-    @Enumerated(EnumType.STRING)
-    private ETipoUsuario role;
-
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "perfis_usuario", joinColumns = @JoinColumn(name = "usuario_id"))
     @Enumerated(EnumType.STRING)
@@ -54,4 +57,37 @@ public class Usuario extends  EntidadeGenerica {
             this.roles.add(ETipoUsuario.PARTICIPANTE);
         }
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return this.senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() {
+        return this.ativo;
+    }
+
+
 }
