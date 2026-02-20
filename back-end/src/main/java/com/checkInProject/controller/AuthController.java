@@ -37,8 +37,6 @@ public class AuthController {
         this.tokenConfig = tokenConfig;
     }
 
-
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
 

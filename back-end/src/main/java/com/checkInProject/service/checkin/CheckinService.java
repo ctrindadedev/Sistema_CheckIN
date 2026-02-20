@@ -32,6 +32,7 @@ public class CheckinService {
         if (inscricao.getDataCheckin() != null) {
             throw new RegraDeNegocioException("O check-in para esta inscrição já foi realizado anteriormente.");
         }
+
         inscricao.setDataCheckin(LocalDateTime.now());
         inscricao.setStatusCheckin(EStatusCheckInEvento.VALIDADO);
 

@@ -1,6 +1,7 @@
 package com.checkInProject.service.inscricao;
 
-import com.checkInProject.dto.InscricaoDTO;
+import com.checkInProject.dto.request.InscricaoRequestDTO;
+import com.checkInProject.dto.response.InscricaoResponseDTO;
 import com.checkInProject.exception.RecursoNaoEncontradoException;
 import com.checkInProject.exception.RegraDeNegocioException;
 import com.checkInProject.model.Evento;
@@ -9,10 +10,9 @@ import com.checkInProject.model.Usuario;
 import com.checkInProject.repository.inscricao.InscricaoRepository;
 import com.checkInProject.service.evento.EventoService;
 import com.checkInProject.service.usuario.UsuarioService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -21,8 +21,7 @@ public class InscricaoService {
 
     private final InscricaoRepository inscricaoRepository;
     private final EventoService eventoService;
-    private  final UsuarioService usuarioService;
-
+    private final UsuarioService usuarioService;
 
     public InscricaoService(InscricaoRepository inscricaoRepository, EventoService eventoService, UsuarioService usuarioService) {
         this.inscricaoRepository = inscricaoRepository;
@@ -30,47 +29,48 @@ public class InscricaoService {
         this.usuarioService = usuarioService;
     }
 
-    public List<Inscricao> listarTodas() {
-        return inscricaoRepository.findAll();
+    public List<InscricaoResponseDTO> listarTodas() {
+        return inscricaoRepository.findAll().stream()
+                .map(InscricaoResponseDTO::fromEntityToResponse)
+                .toList();
     }
 
-    public List<Inscricao> listarPorUsuarioId(Long id) {
+    public List<InscricaoResponseDTO> listarPorUsuarioId(Long id) {
         Usuario usuario = usuarioService.buscarPorId(id);
-        if (usuario.getId() == null || !usuario.getId().equals(id)){
-            throw new RecursoNaoEncontradoException("Usuário informado não existe");
-        }
-        return inscricaoRepository.findByUsuario(usuario);
+
+        return inscricaoRepository.findByUsuario(usuario).stream()
+                .map(InscricaoResponseDTO::fromEntityToResponse)
+                .toList();
     }
 
     @Transactional
-    public Inscricao realizarInscricao(Long eventoId, Long usuarioId) {
+    public InscricaoResponseDTO realizarInscricao(InscricaoRequestDTO request, Usuario usuarioLogado) {
+        Evento evento = eventoService.buscarPorId(request.eventoId());
 
-        Evento evento = eventoService.buscarPorId(eventoId);
-        Usuario usuario = usuarioService.buscarPorId(usuarioId);
-
-        if (inscricaoRepository.existsByEventoAndUsuario(evento, usuario)) {
-            throw new RegraDeNegocioException("Usuário já inscrito neste evento");
+        if (inscricaoRepository.existsByEventoAndUsuario(evento, usuarioLogado)) {
+            throw new RegraDeNegocioException("Você já está inscrito neste evento.");
         }
+
         if (evento.getVagas() != null) {
             long ocupadas = inscricaoRepository.countByEvento(evento);
             if (ocupadas >= evento.getVagas()) {
-                throw new RecursoNaoEncontradoException("Não há vagas disponíveis");
+                throw new RegraDeNegocioException("Não há vagas disponíveis para este evento.");
             }
         }
-        InscricaoDTO inscricao = new InscricaoDTO();
-        Inscricao inscricaoToSave = inscricao.toEntity(usuario, evento);
 
-        InscricaoDTO.fromEntity(inscricaoToSave);
-        inscricaoToSave.setEvento(evento);
-        inscricaoToSave.setUsuario(usuario);
+        Inscricao novaInscricao = new Inscricao();
+        novaInscricao.setEvento(evento);
+        novaInscricao.setUsuario(usuarioLogado);
 
-        return inscricaoRepository.save(inscricaoToSave);
+        novaInscricao = inscricaoRepository.save(novaInscricao);
+
+        return InscricaoResponseDTO.fromEntityToResponse(novaInscricao);
     }
 
     @Transactional
     public void cancelarInscricao(Long inscricaoId) {
         Inscricao existente = inscricaoRepository.findById(inscricaoId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição não encontrada"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição não encontrada."));
         inscricaoRepository.delete(existente);
     }
 

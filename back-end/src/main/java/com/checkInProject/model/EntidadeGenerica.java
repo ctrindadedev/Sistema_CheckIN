@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 
-public abstract  class EntidadeGenerica {
+public abstract class EntidadeGenerica {
 
 
 

@@ -42,10 +42,4 @@ public class Evento extends  EntidadeGenerica {
     @JoinColumn(name = "usuario_organizador_id")
     private Usuario usuarioOrganizador;
 
-    @Column(name = "criado_em")
-    private LocalDateTime createdAt;
-
-    @Column(name = "atualizado_em")
-    private LocalDateTime updatedAt;
-
 }

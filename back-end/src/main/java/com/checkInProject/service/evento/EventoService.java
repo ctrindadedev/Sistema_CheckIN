@@ -1,16 +1,15 @@
 package com.checkInProject.service.evento;
 
-import com.checkInProject.dto.EventoDTO;
+import com.checkInProject.dto.request.EventoRequestDTO;
+import com.checkInProject.dto.response.EventoResponseDTO;
 import com.checkInProject.exception.RecursoNaoEncontradoException;
 import com.checkInProject.exception.RegraDeNegocioException;
 import com.checkInProject.model.ETipoUsuario;
 import com.checkInProject.model.Evento;
 import com.checkInProject.model.Usuario;
 import com.checkInProject.repository.evento.EventoRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -33,30 +32,43 @@ public class EventoService {
     }
 
     @Transactional
-    public Evento criar(EventoDTO evento, Usuario usuario) {
-            if (!(usuario.getRoles().contains(ETipoUsuario.ORGANIZADOR))) {
-                throw new RegraDeNegocioException("Usuário precisa ser um organizador.");
-            }
-            Evento eventoToSave;
-            eventoToSave = evento.toEntity();
-            return eventoRepository.save(eventoToSave);
-        };
+    public EventoResponseDTO criar(EventoRequestDTO request, Usuario usuario) {
+        if (!(usuario.getRoles().contains(ETipoUsuario.ORGANIZADOR))) {
+            throw new RegraDeNegocioException("O utilizador precisa de ser um organizador.");
+        }
+        Evento evento = new Evento();
+        evento.setTitulo(request.titulo());
+        evento.setDescricao(request.descricao());
+        evento.setData(request.data());
+        evento.setLocal(request.local());
+        evento.setVagas(request.vagas());
+        evento.setImagemUrl(request.imagemUrl());
+        evento.setUsuarioOrganizador(usuario);
+
+        evento = eventoRepository.save(evento);
+
+        return EventoResponseDTO.fromEntityToResponse(evento);
+    }
 
     @Transactional
-    public Evento atualizar(Long id, Evento dadosAtualizados,  Usuario usuario) {
+    public EventoResponseDTO atualizar(Long id, EventoRequestDTO request, Usuario usuario) {
         if (!(usuario.getRoles().contains(ETipoUsuario.ORGANIZADOR))) {
-            throw new RegraDeNegocioException("Usuário precisa ser um organizador.");
+            throw new RegraDeNegocioException("O utilizador precisa de ser um organizador.");
         }
 
-        Evento eventoexistente = buscarPorId(id);
-        EventoDTO eventoToUpdate = EventoDTO.fromEntity(eventoexistente);
-        eventoToUpdate.setTitulo(dadosAtualizados.getTitulo());
-        eventoToUpdate.setDescricao(dadosAtualizados.getDescricao());
-        eventoToUpdate.setData(dadosAtualizados.getData());
-        eventoToUpdate.setLocal(dadosAtualizados.getLocal());
-        eventoToUpdate.setVagas(dadosAtualizados.getVagas());
-        eventoToUpdate.setImagemUrl(dadosAtualizados.getImagemUrl());
-        return eventoRepository.save(eventoToUpdate.toEntity());
+        Evento eventoExistente = eventoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Evento não encontrado."));
+
+        eventoExistente.setTitulo(request.titulo());
+        eventoExistente.setDescricao(request.descricao());
+        eventoExistente.setData(request.data());
+        eventoExistente.setLocal(request.local());
+        eventoExistente.setVagas(request.vagas());
+        eventoExistente.setImagemUrl(request.imagemUrl());
+
+        eventoExistente = eventoRepository.save(eventoExistente);
+
+        return EventoResponseDTO.fromEntityToResponse(eventoExistente);
     }
 
     @Transactional

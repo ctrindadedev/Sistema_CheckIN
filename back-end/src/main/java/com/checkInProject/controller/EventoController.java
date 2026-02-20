@@ -1,12 +1,15 @@
 package com.checkInProject.controller;
 
 import com.checkInProject.dto.EventoDTO;
+import com.checkInProject.dto.request.EventoRequestDTO;
+import com.checkInProject.dto.response.EventoResponseDTO;
 import com.checkInProject.model.Evento;
 import com.checkInProject.model.Usuario;
 import com.checkInProject.service.evento.EventoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,13 +36,21 @@ public class EventoController {
     }
 
     @PostMapping
-    public ResponseEntity<Evento> criarEvento( @Valid @RequestBody EventoDTO eventoDto, Usuario usuario) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(eventoService.criar(eventoDto, usuario));
+    public ResponseEntity<EventoResponseDTO> criarEvento(
+            @Valid @RequestBody EventoRequestDTO requestDto,
+            @AuthenticationPrincipal Usuario usuario) {
+        EventoResponseDTO response = eventoService.criar(requestDto, usuario);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Evento> atualizarEvento(@PathVariable Long id, @RequestBody Evento evento,  Usuario usuario) {
-        return ResponseEntity.ok(eventoService.atualizar(id, evento, usuario));
+    public ResponseEntity<EventoResponseDTO> atualizarEvento(
+            @PathVariable Long id,
+            @Valid @RequestBody EventoRequestDTO requestDto,
+            @AuthenticationPrincipal Usuario usuario
+    ) {
+        EventoResponseDTO response = eventoService.atualizar(id, requestDto, usuario);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

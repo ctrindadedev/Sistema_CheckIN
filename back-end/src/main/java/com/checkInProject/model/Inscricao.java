@@ -34,12 +34,6 @@ public class Inscricao extends  EntidadeGenerica {
     @Enumerated(EnumType.STRING)
     private EStatusCheckInEvento statusCheckin;
 
-    @Column(name = "criado_em")
-    private LocalDateTime createdAt;
-
-    @Column(name = "atualizado_em")
-    private LocalDateTime updatedAt;
-
     @PrePersist
     private void prePersistInscricao() {
         if (this.statusCheckin == null) {

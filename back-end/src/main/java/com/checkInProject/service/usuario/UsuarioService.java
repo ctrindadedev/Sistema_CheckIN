@@ -20,6 +20,7 @@ public class UsuarioService {
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
     }
+
     public  Usuario buscarPorId(Long id){
         return usuarioRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
     }

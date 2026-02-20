@@ -37,12 +37,6 @@ public class Usuario extends  EntidadeGenerica implements UserDetails {
 
     private Boolean ativo;
 
-    @Column(name = "criado_em")
-    private LocalDateTime createdAt;
-
-    @Column(name = "atualizado_em")
-    private LocalDateTime updatedAt;
-
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "perfis_usuario", joinColumns = @JoinColumn(name = "usuario_id"))
     @Enumerated(EnumType.STRING)
