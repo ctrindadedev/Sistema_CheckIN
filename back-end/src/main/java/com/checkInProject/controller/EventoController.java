@@ -1,6 +1,5 @@
 package com.checkInProject.controller;
 
-import com.checkInProject.dto.EventoDTO;
 import com.checkInProject.dto.request.EventoRequestDTO;
 import com.checkInProject.dto.response.EventoResponseDTO;
 import com.checkInProject.model.Evento;
