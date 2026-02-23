@@ -1,5 +1,6 @@
 package com.checkInProject.service.checkin;
 
+import com.checkInProject.dto.response.InscricaoResponseDTO;
 import com.checkInProject.exception.RecursoNaoEncontradoException;
 import com.checkInProject.exception.RegraDeNegocioException;
 import com.checkInProject.model.EStatusCheckInEvento;
@@ -24,7 +25,7 @@ public class CheckinService {
     private final InscricaoService inscricaoService;
     private final InscricaoRepository inscricaoRepository;
 
-    public Inscricao realizarCheckIn(Long eventoId, Long usuarioId) {
+    public InscricaoResponseDTO realizarCheckIn(Long eventoId, Long usuarioId) {
 
         Inscricao inscricao = inscricaoService.possuiInscricao(eventoId, usuarioId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição não encontrada, é necessário estar inscrito no evento antes de fazer check-in."));
@@ -38,7 +39,7 @@ public class CheckinService {
 
         inscricaoRepository.save(inscricao);
 
-        return inscricao;
+        return InscricaoResponseDTO.fromEntityToResponse(inscricao);
     }
 
     public void cancelarCheckIn(Long eventoId, Long usuarioId) {

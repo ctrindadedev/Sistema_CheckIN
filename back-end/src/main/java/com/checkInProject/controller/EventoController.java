@@ -25,13 +25,13 @@ public class EventoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Evento>> listarEventos() {
+    public ResponseEntity<List<EventoResponseDTO>> listarEventos() {
         return ResponseEntity.ok(eventoService.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Evento> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(eventoService.buscarPorId(id));
+    public ResponseEntity<EventoResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(eventoService.buscarDtoPorId(id));
     }
 
     @PostMapping

@@ -1,6 +1,7 @@
 package com.checkInProject.controller;
 
 import com.checkInProject.dto.request.CheckinRequest;
+import com.checkInProject.dto.response.InscricaoResponseDTO;
 import com.checkInProject.model.Inscricao;
 import com.checkInProject.service.checkin.CheckinService;
 import jakarta.validation.Valid;
@@ -17,8 +18,8 @@ public class CheckinController {
     private final CheckinService checkinService;
 
     @PostMapping
-    public ResponseEntity<Inscricao> realizarCheckin(@Valid @RequestBody CheckinRequest request) {
-        Inscricao inscricaoRealizada = checkinService.realizarCheckIn(
+    public ResponseEntity<InscricaoResponseDTO> realizarCheckin(@Valid @RequestBody CheckinRequest request) {
+        InscricaoResponseDTO inscricaoRealizada = checkinService.realizarCheckIn(
                 request.eventoId(),
                 request.usuarioId()
         );

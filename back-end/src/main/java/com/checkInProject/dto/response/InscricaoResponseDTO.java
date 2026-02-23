@@ -9,7 +9,7 @@ public record InscricaoResponseDTO(
         Long usuarioId,
         String nomeUsuario,
         String nomeEvento,
-        String status,
+        String statusCheckin,
         LocalDateTime dataCheckin
 ) {
     public static InscricaoResponseDTO fromEntityToResponse(Inscricao inscricao) {

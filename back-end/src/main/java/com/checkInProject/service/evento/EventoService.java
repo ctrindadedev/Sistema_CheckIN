@@ -2,6 +2,7 @@ package com.checkInProject.service.evento;
 
 import com.checkInProject.dto.request.EventoRequestDTO;
 import com.checkInProject.dto.response.EventoResponseDTO;
+import com.checkInProject.dto.response.InscricaoResponseDTO;
 import com.checkInProject.exception.RecursoNaoEncontradoException;
 import com.checkInProject.exception.RegraDeNegocioException;
 import com.checkInProject.model.ETipoUsuario;
@@ -22,13 +23,20 @@ public class EventoService {
         this.eventoRepository = eventoRepository;
     }
 
-    public List<Evento> listarTodos() {
-        return eventoRepository.findAll();
+    public List<EventoResponseDTO> listarTodos() {
+        return eventoRepository.findAll().stream()
+                .map(EventoResponseDTO::fromEntityToResponse)
+                .toList();
     }
 
     public Evento buscarPorId(Long id) {
         return eventoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Evento não encontrado com o ID: " + id));
+    }
+
+    public EventoResponseDTO buscarDtoPorId(Long id) {
+        Evento evento = buscarPorId(id);
+        return EventoResponseDTO.fromEntityToResponse(evento);
     }
 
     @Transactional
@@ -73,9 +81,7 @@ public class EventoService {
 
     @Transactional
     public void remover(Long id) {
-        Evento existente = buscarPorId(id);
-        if (existente == null) throw new RecursoNaoEncontradoException("Evento não encontrado com o ID: " + id);
-
+        Evento existente = eventoRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Evento não encontrado com o ID: " + id));
         eventoRepository.delete(existente);
 
     }
