@@ -1,65 +1,24 @@
-import type { Inscricao } from "../../types";
+import { api } from "../api";
+import type { CheckinRequest, CheckinResponse } from "../../types";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-class InscricaoService {
-  private static instance: InscricaoService;
-  private inscricoes: Inscricao[] = [];
-  private sequence = 1;
-
+class CheckinService {
+  private static instance: CheckinService;
   private constructor() {}
 
-  static getInstance(): InscricaoService {
-    if (!InscricaoService.instance) {
-      InscricaoService.instance = new InscricaoService();
+  public static getInstance(): CheckinService {
+    if (!CheckinService.instance) {
+      CheckinService.instance = new CheckinService();
     }
-    return InscricaoService.instance;
+    return CheckinService.instance;
+  }
+  async realizarCheckin(dados: CheckinRequest): Promise<CheckinResponse> {
+    const response = await api.post<CheckinResponse>("/checkin", dados);
+    return response.data;
   }
 
-  async realizarCheckin(
-    eventoId: number,
-    usuarioId: number
-  ): Promise<Inscricao> {
-    await delay(500);
-
-    const jaInscrito = this.inscricoes.some(
-      (inscricao) =>
-        inscricao.eventoId === eventoId && inscricao.usuarioId === usuarioId
-    );
-
-    if (jaInscrito) {
-      throw new Error("Você já confirmou presença neste evento.");
-    }
-
-    const novaInscricao: Inscricao = {
-      id: this.sequence++,
-      eventoId,
-      usuarioId,
-      dataCheckin: new Date().toISOString(),
-    };
-
-    this.inscricoes.push(novaInscricao);
-    return novaInscricao;
-  }
-
-  async cancelarInscricao(inscricaoId: number): Promise<void> {
-    await delay(300);
-    this.inscricoes = this.inscricoes.filter(
-      (inscricao) => inscricao.id !== inscricaoId
-    );
-  }
-
-  async listarPorUsuario(usuarioId: number): Promise<Inscricao[]> {
-    await delay(300);
-    return this.inscricoes.filter(
-      (inscricao) => inscricao.usuarioId === usuarioId
-    );
-  }
-
-  async listarTodas(): Promise<Inscricao[]> {
-    await delay(300);
-    return [...this.inscricoes];
+  async cancelarCheckin(dados: CheckinRequest): Promise<void> {
+    await api.delete("/checkin", { data: dados });
   }
 }
 
-export const inscricaoService = InscricaoService.getInstance();
+export const checkinService = CheckinService.getInstance();

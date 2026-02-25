@@ -10,11 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.13.5",
+    "formik": "^2.4.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.6",
     "styled-components": "^6.1.11",
-    "formik": "^2.4.6",
     "yup": "^1.4.0"
   },
   "devDependencies": {
