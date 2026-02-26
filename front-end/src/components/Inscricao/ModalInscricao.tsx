@@ -24,6 +24,7 @@ const Dialog = styled.div`
 
 const Title = styled.h3`
   font-size: 1.3rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const Description = styled.p`
@@ -50,6 +51,11 @@ const Button = styled.button<{ $variant?: "outline" | "solid" }>`
     $variant === "outline" ? theme.colors.muted : "#fff"};
   font-weight: 600;
   transition: opacity 150ms ease;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
 
   &:disabled {
     opacity: 0.6;
@@ -59,9 +65,10 @@ const Button = styled.button<{ $variant?: "outline" | "solid" }>`
 
 const Feedback = styled.small<{ $status: "success" | "error" }>`
   color: ${({ $status }) => ($status === "success" ? "#16a34a" : "#dc2626")};
+  font-weight: 500;
 `;
 
-interface ModalCheckInProps {
+interface ModalInscricaoProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => Promise<void> | void;
@@ -69,7 +76,7 @@ interface ModalCheckInProps {
   feedback?: { status: "success" | "error"; message: string } | null;
 }
 
-const ModalCheckIn: React.FC<ModalCheckInProps> = ({
+const ModalInscricao: React.FC<ModalInscricaoProps> = ({
   open,
   onClose,
   onConfirm,
@@ -78,17 +85,12 @@ const ModalCheckIn: React.FC<ModalCheckInProps> = ({
 }) => {
   if (!open) return null;
 
-  const handleConfirm = () => {
-    void onConfirm();
-  };
-
   return (
-    <Overlay>
-      <Dialog>
+    <Overlay onClick={onClose}>
+      <Dialog onClick={(e) => e.stopPropagation()}>
         <Title>Confirmar presença</Title>
         <Description>
-          Ao confirmar, você garante sua vaga para o evento. Utilize o mesmo
-          e-mail na recepção para validar o ingresso.
+          Ao confirmar, você garante sua vaga para o evento.
         </Description>
 
         {feedback && (
@@ -99,7 +101,7 @@ const ModalCheckIn: React.FC<ModalCheckInProps> = ({
           <Button $variant="outline" onClick={onClose} disabled={isLoading}>
             Cancelar
           </Button>
-          <Button onClick={handleConfirm} disabled={isLoading}>
+          <Button onClick={onConfirm} disabled={isLoading}>
             {isLoading ? "Confirmando..." : "Confirmar presença"}
           </Button>
         </Actions>
@@ -108,4 +110,4 @@ const ModalCheckIn: React.FC<ModalCheckInProps> = ({
   );
 };
 
-export default ModalCheckIn;
+export default ModalInscricao;

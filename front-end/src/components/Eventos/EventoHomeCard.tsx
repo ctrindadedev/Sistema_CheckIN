@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import type { Evento } from "../types";
+import type { EventoResponse } from "../../types";
 
 const Card = styled.article`
   background: ${({ theme }) => theme.colors.surface};
@@ -40,10 +40,16 @@ const Action = styled(Link)`
   background: ${({ theme }) => theme.colors.secondary};
   color: #fff;
   font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.85;
+  }
 `;
 
-interface HomeEventoCardProps {
-  evento: Evento;
+interface EventoHomeCardProps {
+  evento: EventoResponse;
 }
 
 const formatDate = (raw: string) => {
@@ -56,14 +62,14 @@ const formatDate = (raw: string) => {
   }).format(date);
 };
 
-const HomeEventoCard: React.FC<HomeEventoCardProps> = ({ evento }) => {
+const EventoHomeCard: React.FC<EventoHomeCardProps> = ({ evento }) => {
   return (
     <Card>
       <Title>{evento.titulo}</Title>
       <Meta>
-        <span>{evento.data}</span>
-        <span>{evento.local}</span>
-        <span>{evento.vagas} vagas</span>
+        <span>📅 {formatDate(evento.data)}</span>
+        <span>📍 {evento.local}</span>
+        <span>👥 {evento.vagas} vagas</span>
       </Meta>
       <Description>{evento.descricao}</Description>
       <Action to={`/evento/${evento.id}`}>Saber mais</Action>
@@ -71,4 +77,4 @@ const HomeEventoCard: React.FC<HomeEventoCardProps> = ({ evento }) => {
   );
 };
 
-export default HomeEventoCard;
+export default EventoHomeCard;

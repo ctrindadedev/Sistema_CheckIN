@@ -1,6 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import type { Evento } from "../types";
+import type { EventoResponse } from "../../types";
+
+interface EventoItemProps {
+  evento: EventoResponse;
+  acaoBotao?: () => void;
+  textoBotao?: string;
+}
 
 const Wrapper = styled.article`
   display: grid;
@@ -62,9 +68,22 @@ const Value = styled.strong`
   font-size: 1rem;
 `;
 
-interface EventoItemProps {
-  evento: Evento;
-}
+const ActionButton = styled.button`
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  border-radius: ${({ theme }) => theme.radii.sm};
+  background: ${({ theme }) => theme.colors.primary};
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
 
 const formatDate = (raw: string) => {
   const date = new Date(raw);
@@ -77,30 +96,41 @@ const formatDate = (raw: string) => {
   }).format(date);
 };
 
-const EventoItem: React.FC<EventoItemProps> = ({ evento }) => {
+export function EventoItem({ evento, acaoBotao, textoBotao }: EventoItemProps) {
   return (
     <Wrapper>
-      <Cover $image={evento.imagemUrl} role="presentation" />
+      <Cover $image={evento.imagemUrl} />
+
       <div>
         <Title>{evento.titulo}</Title>
         <Description>{evento.descricao}</Description>
+
         <MetaGrid>
           <MetaBlock>
-            <Label>Data</Label>
-            <Value>{evento.data}</Value>
+            <Label>Data e Hora</Label>
+            <Value>{formatDate(evento.data)}</Value>
           </MetaBlock>
+
           <MetaBlock>
             <Label>Local</Label>
             <Value>{evento.local}</Value>
           </MetaBlock>
+
+          <MetaBlock>
+            <Label>Organizador</Label>
+            <Value>{evento.organizadorNome}</Value>
+          </MetaBlock>
+
           <MetaBlock>
             <Label>Vagas</Label>
             <Value>{evento.vagas}</Value>
           </MetaBlock>
         </MetaGrid>
+
+        {textoBotao && acaoBotao && (
+          <ActionButton onClick={acaoBotao}>{textoBotao}</ActionButton>
+        )}
       </div>
     </Wrapper>
   );
-};
-
-export default EventoItem;
+}
