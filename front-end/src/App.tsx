@@ -4,11 +4,10 @@ import styled from "styled-components";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
-import Auth from "./pages/Auth";
+import Auth from "./pages/Login";
 import Evento from "./pages/Evento";
 import EventoUser from "./pages/EventoUser";
 import { AuthProvider } from "./context/AuthContext";
-import { EventProvider } from "./context/EventContext";
 
 const AppShell = styled.div`
   min-height: 100vh;
@@ -27,20 +26,18 @@ const Main = styled.main`
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <EventProvider>
-        <AppShell>
-          <Header />
-          <Main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/evento/:id" element={<Evento />} />
-              <Route path="/meus-eventos" element={<EventoUser />} />
-            </Routes>
-          </Main>
-          <Footer />
-        </AppShell>
-      </EventProvider>
+      <AppShell>
+        <Header />
+        <Main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/evento/:id" element={<Evento />} />
+            <Route path="/meus-eventos" element={<EventoUser />} />
+          </Routes>
+        </Main>
+        <Footer />
+      </AppShell>
     </AuthProvider>
   );
 };

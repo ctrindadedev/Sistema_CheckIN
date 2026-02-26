@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
-import EventoItem from "../components/EventoItem";
-import ModalCheckIn from "../components/ModalCheckIn";
-import { useEvents } from "../context/EventContext";
-import { useAuth } from "../context/AuthContext";
-import { inscricaoService } from "../service/checkin";
+import { useQuery } from "@tanstack/react-query";
+import { EventoItem } from "../../components/Eventos/EventoItem";
+import ModalInscricao from "../../components/Inscricao/ModalInscricao";
+import { useAuth } from "../../context/AuthContext";
+import { eventoService } from "../../service/evento";
+import { inscricaoService } from "../../service/inscricao";
 
 const Container = styled.section`
   display: flex;
@@ -27,11 +28,22 @@ const PrimaryButton = styled.button`
   background: ${({ theme }) => theme.colors.primary};
   color: #fff;
   font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
 const SecondaryLink = styled(Link)`
   color: ${({ theme }) => theme.colors.primary};
   font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const Placeholder = styled.p`
@@ -41,9 +53,17 @@ const Placeholder = styled.p`
 const Evento = () => {
   const { id } = useParams<{ id: string }>();
   const eventId = Number(id);
-  const { getEventById, isLoading } = useEvents();
-  const evento = Number.isFinite(eventId) ? getEventById(eventId) : undefined;
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
+
+  const {
+    data: evento,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["evento", eventId],
+    queryFn: () => eventoService.buscarPorId(eventId),
+    enabled: Number.isFinite(eventId),
+  });
 
   const [modalOpen, setModalOpen] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -52,42 +72,42 @@ const Evento = () => {
     message: string;
   } | null>(null);
 
-  const handleConfirmCheckin = async () => {
-    if (!evento || !user) {
-      setFeedback({
-        status: "error",
-        message: "Você precisa estar logado para confirmar.",
-      });
-      return;
-    }
-
+  const handleConfirmInscricao = async () => {
+    if (!evento) return;
     try {
       setIsConfirming(true);
-      await inscricaoService.realizarCheckin(evento.id, user.id);
+      await inscricaoService.criar({ eventoId: evento.id });
+
       setFeedback({
         status: "success",
-        message: "Check-in reservado! Veja em 'Meus eventos'.",
+        message: "Inscrição realizada! Veja em 'Meus eventos'.",
       });
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Não foi possível confirmar.";
-      setFeedback({ status: "error", message });
+    } catch (err: any) {
+      const errorMessage =
+        err.response?.data?.message ||
+        "Não foi possível confirmar a inscrição.";
+      setFeedback({ status: "error", message: errorMessage });
     } finally {
       setIsConfirming(false);
     }
   };
 
   if (isLoading) {
-    return <Placeholder>Carregando evento...</Placeholder>;
+    return <Placeholder>Carregando detalhes do evento...</Placeholder>;
   }
 
   if (!evento) {
-    return <Placeholder>Evento não encontrado.</Placeholder>;
+    return <Placeholder>Evento não encontrado </Placeholder>;
+  }
+
+  if (error) {
+    return <Placeholder> Ocorreu um erro ao buscar o evento. </Placeholder>;
   }
 
   return (
     <Container>
       <EventoItem evento={evento} />
+
       <Actions>
         {isAuthenticated ? (
           <PrimaryButton
@@ -96,20 +116,20 @@ const Evento = () => {
               setModalOpen(true);
             }}
           >
-            Confirmar presença
+            Participar do Evento
           </PrimaryButton>
         ) : (
           <SecondaryLink to="/auth">
             Entre para confirmar sua presença
           </SecondaryLink>
         )}
-        <SecondaryLink to="/">← Voltar</SecondaryLink>
+        <SecondaryLink to="/">← Voltar para listagem</SecondaryLink>
       </Actions>
 
-      <ModalCheckIn
+      <ModalInscricao
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onConfirm={handleConfirmCheckin}
+        onConfirm={handleConfirmInscricao}
         isLoading={isConfirming}
         feedback={feedback}
       />

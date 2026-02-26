@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import HomeEventoCard from "../components/HomeEventoCard";
-import { useEvents } from "../context/EventContext";
+import { useQuery } from "@tanstack/react-query";
+import EventoHomeCard from "../../components/Eventos/EventoHomeCard";
+import { eventoService } from "../../service/evento";
 
 const Page = styled.section`
   display: flex;
@@ -31,6 +32,12 @@ const HeroButton = styled(Link)`
   font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.4);
   color: inherit;
+  text-decoration: none;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 `;
 
 const Grid = styled.div`
@@ -45,7 +52,14 @@ const Placeholder = styled.div`
 `;
 
 const Home = () => {
-  const { events, isLoading, error } = useEvents();
+  const {
+    data: events = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["eventos"],
+    queryFn: () => eventoService.listarTodos(),
+  });
 
   return (
     <Page>
@@ -53,10 +67,7 @@ const Home = () => {
         <div>
           <p>Plataforma oficial de check-in</p>
           <h1>Descubra, cadastre-se e confirme presença em segundos.</h1>
-          <p>
-            Gerencie toda a jornada dos participantes com transparência e
-            experiência premium.
-          </p>
+          <p>Gerencie toda a jornada dos participantes</p>
         </div>
         <HeroActions>
           <HeroButton to="/auth">Quero participar</HeroButton>
@@ -65,7 +76,10 @@ const Home = () => {
       </Hero>
 
       {isLoading && <Placeholder>Carregando eventos...</Placeholder>}
-      {error && <Placeholder>{error}</Placeholder>}
+
+      {error && (
+        <Placeholder>Ocorreu um erro ao carregar os eventos.</Placeholder>
+      )}
 
       {!isLoading && !error && events.length === 0 && (
         <Placeholder>
@@ -76,7 +90,7 @@ const Home = () => {
       {!isLoading && !error && events.length > 0 && (
         <Grid>
           {events.map((evento) => (
-            <HomeEventoCard key={evento.id} evento={evento} />
+            <EventoHomeCard key={evento.id} evento={evento} />
           ))}
         </Grid>
       )}

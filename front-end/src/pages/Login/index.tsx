@@ -87,7 +87,7 @@ const Auth = () => {
 
   const handleSubmit = async (
     values: LoginPayload,
-    helpers: FormikHelpers<LoginPayload>
+    helpers: FormikHelpers<LoginPayload>,
   ) => {
     helpers.setStatus(undefined);
     try {
