@@ -1,63 +1,39 @@
-import type { LoginPayload, Usuario } from "../../types";
-
-const STORAGE_KEY = "@checkin-system:user";
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import { api } from "../api";
+import { jwtDecode } from "jwt-decode";
+import type { LoginRequest, LoginResponse, JWTUserData } from "../../types";
 
 class AuthService {
-  private static instance: AuthService;
-  private currentUser: Usuario | null = null;
+  async login(payload: LoginRequest): Promise<JWTUserData> {
+    const response = await api.post<LoginResponse>("/auth/login", payload);
+    const token = response.data.token;
+    localStorage.setItem("token", token);
 
-  private constructor() {
-    if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        this.currentUser = JSON.parse(stored);
+    return jwtDecode<JWTUserData>(token);
+  }
+
+  logout(): void {
+    localStorage.removeItem("token");
+  }
+
+  //Usa quando a página recarrega para verificar se ainda tem o JWT
+  getCurrentUser(): JWTUserData | null {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+
+    try {
+      const decoded = jwtDecode<JWTUserData>(token);
+
+      if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+        this.logout();
+        return null;
       }
+
+      return decoded;
+    } catch (error) {
+      this.logout();
+      return null;
     }
-  }
-
-  static getInstance(): AuthService {
-    if (!AuthService.instance) {
-      AuthService.instance = new AuthService();
-    }
-    return AuthService.instance;
-  }
-
-  async login(payload: LoginPayload): Promise<Usuario> {
-    await delay(600);
-
-    const token =
-      typeof window !== "undefined" && window.crypto?.randomUUID
-        ? window.crypto.randomUUID()
-        : Math.random().toString(36).slice(2);
-
-    const user: Usuario = {
-      id: Date.now(),
-      nome: "Participante Convidado",
-      email: payload.email,
-      token,
-    };
-
-    this.currentUser = user;
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    }
-
-    return user;
-  }
-
-  async logout(): Promise<void> {
-    await delay(200);
-    this.currentUser = null;
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(STORAGE_KEY);
-    }
-  }
-
-  getCurrentUser(): Usuario | null {
-    return this.currentUser;
   }
 }
 
-export const authService = AuthService.getInstance();
+export const authService = new AuthService();

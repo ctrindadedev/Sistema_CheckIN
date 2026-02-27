@@ -67,7 +67,6 @@ const Home = () => {
         <div>
           <p>Plataforma oficial de check-in</p>
           <h1>Descubra, cadastre-se e confirme presença em segundos.</h1>
-          <p>Gerencie toda a jornada dos participantes</p>
         </div>
         <HeroActions>
           <HeroButton to="/auth">Quero participar</HeroButton>

@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Formik, Form, Field, ErrorMessage, type FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { useAuth } from "../context/AuthContext";
-import type { LoginPayload } from "../types";
+import { useAuth } from "../../context/AuthContext";
+import type { LoginRequest } from "../../types";
 
 type FormStatus = { type: "success" | "error"; message: string };
 
@@ -12,7 +12,6 @@ const Container = styled.section`
   display: flex;
   justify-content: center;
 `;
-
 const Card = styled.div`
   width: min(420px, 100%);
   background: ${({ theme }) => theme.colors.surface};
@@ -23,17 +22,14 @@ const Card = styled.div`
   flex-direction: column;
   gap: 1rem;
 `;
-
 const Title = styled.h1`
   font-size: 1.5rem;
 `;
-
 const StyledForm = styled(Form)`
   display: flex;
   flex-direction: column;
   gap: 1rem;
 `;
-
 const Label = styled.label`
   display: flex;
   flex-direction: column;
@@ -41,19 +37,16 @@ const Label = styled.label`
   font-weight: 500;
   color: ${({ theme }) => theme.colors.text};
 `;
-
 const Input = styled(Field)`
   padding: 0.8rem 1rem;
   border-radius: ${({ theme }) => theme.radii.sm};
   border: 1px solid rgba(15, 23, 42, 0.15);
   font-size: 1rem;
 `;
-
 const ErrorText = styled(ErrorMessage)`
   color: #dc2626;
   font-size: 0.85rem;
 `;
-
 const SubmitButton = styled.button`
   border: none;
   border-radius: ${({ theme }) => theme.radii.sm};
@@ -62,43 +55,49 @@ const SubmitButton = styled.button`
   color: #fff;
   font-weight: 600;
   transition: opacity 150ms ease;
-
+  cursor: pointer;
   &:disabled {
     opacity: 0.65;
+    cursor: not-allowed;
   }
 `;
-
 const StatusMessage = styled.small<{ $status: "success" | "error" }>`
   color: ${({ $status }) => ($status === "success" ? "#16a34a" : "#dc2626")};
+  font-weight: 500;
 `;
 
 const validationSchema = Yup.object({
   email: Yup.string()
     .email("Digite um e-mail válido.")
     .required("O e-mail é obrigatório."),
-  senha: Yup.string()
+  password: Yup.string()
     .min(6, "A senha precisa ter ao menos 6 caracteres.")
     .required("A senha é obrigatória."),
 });
 
 const Auth = () => {
-  const { login, isLoading } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (
-    values: LoginPayload,
-    helpers: FormikHelpers<LoginPayload>,
+    values: LoginRequest,
+    helpers: FormikHelpers<LoginRequest>,
   ) => {
     helpers.setStatus(undefined);
     try {
       await login(values);
-      helpers.setStatus({ type: "success", message: "Login realizado!" });
-      navigate("/meus-eventos");
-    } catch (error) {
+      helpers.setStatus({
+        type: "success",
+        message: "Login realizado com sucesso!",
+      });
+
+      setTimeout(() => navigate("/meus-eventos"), 500);
+    } catch (error: any) {
+      const backendMessage = error.response?.data?.message;
       const message =
-        error instanceof Error
-          ? error.message
-          : "Não foi possível entrar. Tente novamente.";
+        backendMessage ||
+        "Credenciais inválidas. Verifique seu e-mail e senha.";
+
       helpers.setStatus({ type: "error", message });
     } finally {
       helpers.setSubmitting(false);
@@ -110,11 +109,11 @@ const Auth = () => {
       <Card>
         <Title>Acesse sua conta</Title>
         <p>
-          Utilize o mesmo e-mail utilizado nas inscrições e acompanhe seus
+          Utilize o e-mail cadastrado nas inscrições para acompanhar seus
           ingressos.
         </p>
         <Formik
-          initialValues={{ email: "", senha: "" }}
+          initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
@@ -144,11 +143,8 @@ const Auth = () => {
                   </StatusMessage>
                 )}
 
-                <SubmitButton
-                  disabled={isSubmitting || isLoading}
-                  type="submit"
-                >
-                  {isSubmitting || isLoading ? "Entrando..." : "Entrar"}
+                <SubmitButton disabled={isSubmitting} type="submit">
+                  {isSubmitting ? "Entrando..." : "Entrar"}
                 </SubmitButton>
               </StyledForm>
             );

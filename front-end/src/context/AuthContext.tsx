@@ -7,54 +7,42 @@ import {
   type ReactNode,
 } from "react";
 import { authService } from "../service/auth";
-import type { LoginPayload, Usuario } from "../types";
+import type { LoginRequest, JWTUserData } from "../types";
 
 interface AuthContextValue {
-  user: Usuario | null;
+  user: JWTUserData | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (payload: LoginPayload) => Promise<void>;
-  logout: () => Promise<void>;
+  login: (payload: LoginRequest) => Promise<void>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<Usuario | null>(
-    authService.getCurrentUser()
+  const [user, setUser] = useState<JWTUserData | null>(
+    authService.getCurrentUser(),
   );
-  const [isLoading, setIsLoading] = useState(false);
 
-  const login = useCallback(async (payload: LoginPayload) => {
-    setIsLoading(true);
-    try {
-      const authenticated = await authService.login(payload);
-      setUser(authenticated);
-    } finally {
-      setIsLoading(false);
-    }
+  const login = useCallback(async (payload: LoginRequest) => {
+    const userData = await authService.login(payload);
+    setUser(userData);
   }, []);
 
-  const logout = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      await authService.logout();
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
+  const logout = useCallback(() => {
+    authService.logout();
+    setUser(null);
   }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       isAuthenticated: Boolean(user),
-      isLoading,
       login,
       logout,
     }),
-    [isLoading, login, logout, user]
+    [login, logout, user],
   );
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
