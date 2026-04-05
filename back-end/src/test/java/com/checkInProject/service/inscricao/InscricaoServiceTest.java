@@ -1,4 +1,4 @@
-package com.CheckInProject.service.inscricao;
+package com.checkInProject.service.inscricao;
 
 import com.checkInProject.dto.request.InscricaoRequestDTO;
 import com.checkInProject.dto.response.InscricaoResponseDTO;
@@ -9,8 +9,6 @@ import com.checkInProject.model.Inscricao;
 import com.checkInProject.model.Usuario;
 import com.checkInProject.repository.inscricao.InscricaoRepository;
 import com.checkInProject.service.evento.EventoService;
-import com.checkInProject.service.inscricao.InscricaoService;
-import com.checkInProject.service.usuario.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

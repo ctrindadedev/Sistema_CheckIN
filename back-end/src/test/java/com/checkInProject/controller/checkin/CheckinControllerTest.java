@@ -1,12 +1,13 @@
-package com.CheckInProject.controller.evento;
+package com.checkInProject.controller.checkin;
 
 
 import com.checkInProject.CheckInProjectApplication;
 import com.checkInProject.config.TokenConfig;
-import com.checkInProject.controller.EventoController;
-import com.checkInProject.dto.request.EventoRequestDTO;
-import com.checkInProject.dto.response.EventoResponseDTO;
-import com.checkInProject.service.evento.EventoService;
+import com.checkInProject.controller.CheckinController;
+import com.checkInProject.dto.request.CheckinRequest;
+import com.checkInProject.dto.response.InscricaoResponseDTO;
+import com.checkInProject.model.Inscricao;
+import com.checkInProject.service.checkin.CheckinService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +18,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
-
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = EventoController.class)
+@WebMvcTest(controllers = CheckinController.class)
 @ContextConfiguration(classes = CheckInProjectApplication.class)
 @AutoConfigureMockMvc(addFilters = false)
-
-class EventoControllerTest {
+class CheckinControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,21 +35,22 @@ class EventoControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private EventoService eventoService;
+    private CheckinService checkinService;
+
 
     @MockitoBean
     private TokenConfig tokenConfig;
 
     @Test
-    void criarEvento_DeveRetornar201Created() throws Exception {
-        EventoRequestDTO request = new EventoRequestDTO("Festa", "Desc", LocalDateTime.now().plusDays(2), "Local", 100, "url");
-        EventoResponseDTO response = new EventoResponseDTO(1L, "Festa", "Desc", LocalDateTime.now(), "Local", 100, "url", 1L, "Org");
+    void realizarCheckin_DeveRetornar200Ok() throws Exception {
+        CheckinRequest request = new CheckinRequest(1L, 1L);
+        Inscricao inscricaoMokada = new Inscricao();
 
-        when(eventoService.criar(any(), any())).thenReturn(response);
+        when(checkinService.realizarCheckIn(anyLong(), anyLong())).thenReturn(InscricaoResponseDTO.fromEntityToResponse(inscricaoMokada));
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/checkin")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 }

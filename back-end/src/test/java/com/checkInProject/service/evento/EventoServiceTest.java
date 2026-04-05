@@ -1,4 +1,4 @@
-package com.CheckInProject.service.evento;
+package com.checkInProject.service.evento;
 
 import com.checkInProject.dto.request.EventoRequestDTO;
 import com.checkInProject.dto.response.EventoResponseDTO;
@@ -8,7 +8,6 @@ import com.checkInProject.model.ETipoUsuario;
 import com.checkInProject.model.Evento;
 import com.checkInProject.model.Usuario;
 import com.checkInProject.repository.evento.EventoRepository;
-import com.checkInProject.service.evento.EventoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

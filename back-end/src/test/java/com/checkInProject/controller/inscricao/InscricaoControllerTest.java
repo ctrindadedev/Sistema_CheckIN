@@ -1,4 +1,4 @@
-package com.CheckInProject.controller.inscricao;
+package com.checkInProject.controller.inscricao;
 
 import com.checkInProject.CheckInProjectApplication;
 import com.checkInProject.config.TokenConfig;

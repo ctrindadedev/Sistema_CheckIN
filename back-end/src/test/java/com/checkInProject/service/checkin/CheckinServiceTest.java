@@ -1,4 +1,4 @@
-package com.CheckInProject.service.checkin;
+package com.checkInProject.service.checkin;
 
 import com.checkInProject.dto.response.InscricaoResponseDTO;
 import com.checkInProject.exception.RecursoNaoEncontradoException;
@@ -6,7 +6,6 @@ import com.checkInProject.exception.RegraDeNegocioException;
 import com.checkInProject.model.EStatusCheckInEvento;
 import com.checkInProject.model.Inscricao;
 import com.checkInProject.repository.inscricao.InscricaoRepository;
-import com.checkInProject.service.checkin.CheckinService;
 import com.checkInProject.service.inscricao.InscricaoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
