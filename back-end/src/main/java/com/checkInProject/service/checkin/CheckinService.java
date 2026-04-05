@@ -27,6 +27,10 @@ public class CheckinService {
 
     public InscricaoResponseDTO realizarCheckIn(Long eventoId, Long usuarioId) {
 
+        if (eventoId == null || usuarioId == null) {
+            throw new RegraDeNegocioException("O check-in só pode ser realizado com números de ID de evento e usuário válidos.");
+        }
+
         Inscricao inscricao = inscricaoService.possuiInscricao(eventoId, usuarioId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Inscrição não encontrada, é necessário estar inscrito no evento antes de fazer check-in."));
 

@@ -3,10 +3,13 @@ package com.checkInProject.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -37,6 +40,25 @@ public class GlobalExceptionHandler {
                 .status(status.value())
                 .error("Violação de regra de negócio")
                 .message(e.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(status).body(erro);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErroPadrao> handleValidationExceptions(MethodArgumentNotValidException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        String mensagensDeErro = e.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.joining(", "));
+
+        ErroPadrao erro = ErroPadrao.builder()
+                .timestamp(Instant.now())
+                .status(status.value())
+                .error("Erro de validação nos campos")
+                .message(mensagensDeErro)
                 .path(request.getRequestURI())
                 .build();
 
