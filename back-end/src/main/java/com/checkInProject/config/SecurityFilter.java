@@ -39,11 +39,8 @@ public class SecurityFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userData, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            filterChain.doFilter(request, response);
         }
-        else  {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        }
-        }
+        filterChain.doFilter(request, response);
+    }
 
     }

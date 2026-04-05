@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = {"roles", "senha"})
 public class Usuario extends  EntidadeGenerica implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
