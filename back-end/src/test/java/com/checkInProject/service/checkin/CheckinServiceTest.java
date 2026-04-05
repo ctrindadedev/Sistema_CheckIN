@@ -4,7 +4,9 @@ import com.checkInProject.dto.response.InscricaoResponseDTO;
 import com.checkInProject.exception.RecursoNaoEncontradoException;
 import com.checkInProject.exception.RegraDeNegocioException;
 import com.checkInProject.model.EStatusCheckInEvento;
+import com.checkInProject.model.Evento;
 import com.checkInProject.model.Inscricao;
+import com.checkInProject.model.Usuario;
 import com.checkInProject.repository.inscricao.InscricaoRepository;
 import com.checkInProject.service.inscricao.InscricaoService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,11 +36,23 @@ class CheckinServiceTest {
 
     private Inscricao inscricao;
 
+    private Evento evento;
+
+    private Usuario usuario;
+
     @BeforeEach
     void setUp() {
+        evento = new Evento();
+        evento.setId(1L);
+        evento.setTitulo("Festa");
+        usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNome("Fernando");
         inscricao = new Inscricao();
         inscricao.setId(1L);
         inscricao.setStatusCheckin(EStatusCheckInEvento.AGUARDANDO_VALIDACAO);
+        inscricao.setEvento(evento);
+        inscricao.setUsuario(usuario);
     }
 
     @Test
@@ -48,7 +62,7 @@ class CheckinServiceTest {
         InscricaoResponseDTO resultado = checkinService.realizarCheckIn(1L, 1L);
 
         assertNotNull(resultado.dataCheckin());
-        assertEquals(EStatusCheckInEvento.VALIDADO, resultado.statusCheckin());
+        assertEquals(EStatusCheckInEvento.VALIDADO.name(), resultado.statusCheckin());
         verify(inscricaoRepository, times(1)).save(inscricao);
     }
 

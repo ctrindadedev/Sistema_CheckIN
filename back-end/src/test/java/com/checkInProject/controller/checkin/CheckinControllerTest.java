@@ -6,7 +6,7 @@ import com.checkInProject.config.TokenConfig;
 import com.checkInProject.controller.CheckinController;
 import com.checkInProject.dto.request.CheckinRequest;
 import com.checkInProject.dto.response.InscricaoResponseDTO;
-import com.checkInProject.model.Inscricao;
+import com.checkInProject.model.EStatusCheckInEvento;
 import com.checkInProject.service.checkin.CheckinService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -44,9 +44,11 @@ class CheckinControllerTest {
     @Test
     void realizarCheckin_DeveRetornar200Ok() throws Exception {
         CheckinRequest request = new CheckinRequest(1L, 1L);
-        Inscricao inscricaoMokada = new Inscricao();
+        InscricaoResponseDTO response = new InscricaoResponseDTO(
+                1L, 1L, 1L, "João", "Tech Summit", EStatusCheckInEvento.VALIDADO.name(), null
+        );
 
-        when(checkinService.realizarCheckIn(anyLong(), anyLong())).thenReturn(InscricaoResponseDTO.fromEntityToResponse(inscricaoMokada));
+        when(checkinService.realizarCheckIn(anyLong(), anyLong())).thenReturn(response);
 
         mockMvc.perform(post("/checkin")
                         .contentType(MediaType.APPLICATION_JSON)
