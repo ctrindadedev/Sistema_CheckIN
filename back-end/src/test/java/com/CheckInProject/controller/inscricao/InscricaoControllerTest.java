@@ -1,5 +1,7 @@
 package com.CheckInProject.controller.inscricao;
 
+import com.checkInProject.CheckInProjectApplication;
+import com.checkInProject.config.TokenConfig;
 import com.checkInProject.controller.InscricaoController;
 import com.checkInProject.dto.request.InscricaoRequestDTO;
 import com.checkInProject.dto.response.InscricaoResponseDTO;
@@ -9,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -25,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = InscricaoController.class)
 // Desativa o Spring Security para focar só na rota
 @AutoConfigureMockMvc(addFilters = false)
+@ContextConfiguration(classes = CheckInProjectApplication.class)
+
 class InscricaoControllerTest {
 
     @Autowired
@@ -35,6 +39,9 @@ class InscricaoControllerTest {
 
     @MockitoBean
     private InscricaoService inscricaoService;
+
+    @MockitoBean
+    private TokenConfig tokenConfig;
 
     @Test
     void inscrever_ComDadosValidos_DeveRetornar201Created() throws Exception {

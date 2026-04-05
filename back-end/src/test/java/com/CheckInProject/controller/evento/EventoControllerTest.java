@@ -1,6 +1,8 @@
 package com.CheckInProject.controller.evento;
 
 
+import com.checkInProject.CheckInProjectApplication;
+import com.checkInProject.config.TokenConfig;
 import com.checkInProject.controller.EventoController;
 import com.checkInProject.dto.request.EventoRequestDTO;
 import com.checkInProject.dto.response.EventoResponseDTO;
@@ -10,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,7 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = EventoController.class)
+@ContextConfiguration(classes = CheckInProjectApplication.class)
 @AutoConfigureMockMvc(addFilters = false)
+
 class EventoControllerTest {
 
     @Autowired
@@ -34,6 +38,9 @@ class EventoControllerTest {
 
     @MockitoBean
     private EventoService eventoService;
+
+    @MockitoBean
+    private TokenConfig tokenConfig;
 
     @Test
     void criarEvento_DeveRetornar201Created() throws Exception {

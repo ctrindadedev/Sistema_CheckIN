@@ -1,6 +1,8 @@
 package com.CheckInProject.controller.checkin;
 
 
+import com.checkInProject.CheckInProjectApplication;
+import com.checkInProject.config.TokenConfig;
 import com.checkInProject.controller.CheckinController;
 import com.checkInProject.dto.request.CheckinRequest;
 import com.checkInProject.dto.response.InscricaoResponseDTO;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CheckinController.class)
+@ContextConfiguration(classes = CheckInProjectApplication.class)
 @AutoConfigureMockMvc(addFilters = false)
 class CheckinControllerTest {
 
@@ -32,6 +36,10 @@ class CheckinControllerTest {
 
     @MockitoBean
     private CheckinService checkinService;
+
+
+    @MockitoBean
+    private TokenConfig tokenConfig;
 
     @Test
     void realizarCheckin_DeveRetornar200Ok() throws Exception {
