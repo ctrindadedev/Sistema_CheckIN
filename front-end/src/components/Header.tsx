@@ -79,10 +79,10 @@ const LogoutButton = styled.button`
 `;
 
 const Header: React.FC = () => {
-  const { isAuthenticated, user, logout, isLoading } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
 
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -91,10 +91,26 @@ const Header: React.FC = () => {
         <Brand to="/">CheckIN</Brand>
         <Actions>
           <NavBar />
+          {isAuthenticated && user?.roles?.includes("ORGANIZADOR") && (
+            <Link
+              to="/admin"
+              style={{
+                padding: "0.55rem 1rem",
+                borderRadius: "999px",
+                background: "#dc2626",
+                color: "#fff",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              Admin
+            </Link>
+          )}
           {isAuthenticated ? (
             <UserBadge>
-              <span>{user?.nome ?? "Participante"}</span>
-              <LogoutButton onClick={handleLogout} disabled={isLoading}>
+              <span>{user?.email ?? "Participante"}</span>
+              <LogoutButton onClick={handleLogout}>
                 sair
               </LogoutButton>
             </UserBadge>

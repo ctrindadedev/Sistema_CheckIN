@@ -22,3 +22,18 @@ api.interceptors.request.use(
     return Promise.reject(error);
   },
 );
+
+// Interceptor de erro global
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      const currentPath = window.location.pathname;
+      if (currentPath !== "/auth") {
+        window.location.href = `/auth?returnUrl=${currentPath}`;
+      }
+    }
+    return Promise.reject(error);
+  },
+);

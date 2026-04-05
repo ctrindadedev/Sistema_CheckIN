@@ -1,6 +1,6 @@
 import { api } from "../api";
 import { jwtDecode } from "jwt-decode";
-import type { LoginRequest, LoginResponse, JWTUserData } from "../../types";
+import type { LoginRequest, RegisterRequest, LoginResponse, JWTUserData } from "../../types";
 
 class AuthService {
   async login(payload: LoginRequest): Promise<JWTUserData> {
@@ -9,6 +9,10 @@ class AuthService {
     localStorage.setItem("token", token);
 
     return jwtDecode<JWTUserData>(token);
+  }
+
+  async register(payload: RegisterRequest): Promise<void> {
+    await api.post("/auth/register", payload);
   }
 
   logout(): void {

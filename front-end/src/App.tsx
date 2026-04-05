@@ -7,7 +7,11 @@ import Home from "./pages/Home";
 import Auth from "./pages/Login";
 import Evento from "./pages/Evento";
 import EventoUser from "./pages/EventoUser";
+import Admin from "./pages/Admin";
 import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import PublicOnlyRoute from "./routes/PublicOnlyRoute";
+import RoleRoute from "./routes/RoleRoute";
 
 const AppShell = styled.div`
   min-height: 100vh;
@@ -31,9 +35,33 @@ const App: React.FC = () => {
         <Main>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/auth" element={<Auth />} />
             <Route path="/evento/:id" element={<Evento />} />
-            <Route path="/meus-eventos" element={<EventoUser />} />
+            <Route
+              path="/auth"
+              element={
+                <PublicOnlyRoute>
+                  <Auth />
+                </PublicOnlyRoute>
+              }
+            />
+            <Route
+              path="/meus-eventos"
+              element={
+                <ProtectedRoute>
+                  <EventoUser />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <RoleRoute role="ORGANIZADOR">
+                    <Admin />
+                  </RoleRoute>
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Main>
         <Footer />

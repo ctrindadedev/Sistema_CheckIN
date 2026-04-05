@@ -27,6 +27,18 @@ const Placeholder = styled.div`
   background: ${({ theme }) => theme.colors.surface};
   border-radius: ${({ theme }) => theme.radii.md};
   color: ${({ theme }) => theme.colors.muted};
+
+  a {
+    display: inline-block;
+    margin-top: 0.75rem;
+    color: ${({ theme }) => theme.colors.primary};
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 const EventoUser = () => {

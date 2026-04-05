@@ -7,12 +7,13 @@ import {
   type ReactNode,
 } from "react";
 import { authService } from "../service/auth";
-import type { LoginRequest, JWTUserData } from "../types";
+import type { LoginRequest, RegisterRequest, JWTUserData } from "../types";
 
 interface AuthContextValue {
   user: JWTUserData | null;
   isAuthenticated: boolean;
   login: (payload: LoginRequest) => Promise<void>;
+  register: (payload: RegisterRequest) => Promise<void>;
   logout: () => void;
 }
 
@@ -28,6 +29,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(userData);
   }, []);
 
+  const register = useCallback(async (payload: RegisterRequest) => {
+    await authService.register(payload);
+  }, []);
+
   const logout = useCallback(() => {
     authService.logout();
     setUser(null);
@@ -38,9 +43,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       user,
       isAuthenticated: Boolean(user),
       login,
+      register,
       logout,
     }),
-    [login, logout, user],
+    [login, register, logout, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
